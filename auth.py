@@ -108,6 +108,17 @@ def login_from_refresh_token(refresh_token: str) -> bool:
     return _apply_session(res.session, res.user)
 
 
+def request_password_reset(email: str) -> bool:
+    """ส่งอีเมลลิงก์ตั้งรหัสผ่านใหม่ ผ่าน Supabase Auth — ลิงก์พาไปหน้าร้าน (STORE_URL)"""
+    try:
+        _client().auth.reset_password_for_email(
+            email, options={"redirect_to": os.environ.get("STORE_URL", "")}
+        )
+        return True
+    except Exception:
+        return False
+
+
 def logout() -> None:
     try:
         _client().auth.sign_out()

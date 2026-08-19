@@ -9,6 +9,7 @@ from streamlit_cookies_controller import CookieController
 from auth import (
     login, login_from_refresh_token, logout, build_navigation,
     SESSION_COOKIE, DEVICE_COOKIE, claim_session, heartbeat_session, release_session,
+    request_password_reset,
 )
 
 cookie = CookieController()
@@ -151,6 +152,17 @@ if not st.session_state.get("logged_in"):
                     st.rerun()
             else:
                 st.error(st.session_state.get("_auth_error", "เข้าสู่ระบบไม่สำเร็จ"))
+
+        with st.expander("ลืมรหัสผ่าน?"):
+            reset_email = st.text_input(
+                "อีเมลที่ใช้สมัคร", key="reset_email", placeholder="you@example.com",
+            )
+            if st.button("ส่งลิงก์ตั้งรหัสผ่านใหม่", key="btn_reset", use_container_width=True):
+                if reset_email:
+                    request_password_reset(reset_email)
+                    st.success("ถ้าอีเมลนี้มีในระบบ เราได้ส่งลิงก์ตั้งรหัสผ่านใหม่ไปให้แล้ว กรุณาเช็คกล่องจดหมาย (รวม Junk/Spam)")
+                else:
+                    st.warning("กรุณากรอกอีเมล")
 
     st.stop()
 
